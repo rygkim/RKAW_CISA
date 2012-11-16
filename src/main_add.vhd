@@ -48,7 +48,7 @@ signal GG : STD_LOGIC_VECTOR(13 downto 0);
 signal PG : STD_LOGIC_VECTOR(13 downto 0);
 signal temp_larger : STD_LOGIC_VECTOR(55 downto 0);
 signal temp_sum : STD_LOGIC_VECTOR(55 downto 0);
-signal carry : STD_LOGIC_VECTOR(13 downto 0);
+signal carry : STD_LOGIC_VECTOR(14 downto 0);
 
 signal i : integer := 0;
 begin
@@ -59,8 +59,9 @@ P <= Smaller or temp_larger;
 
 temp_sum <= Smaller xor temp_larger;
 carry(0) <= Cin;
+Cout <= carry(14);
 
-CARRY_CALC: for i in 1 to 13 generate
+CARRY_CALC: for i in 1 to 14 generate
 	carry(i) <= GG(i-1) or (PG(i-1) and carry(i-1));
 end generate CARRY_CALC;
 
