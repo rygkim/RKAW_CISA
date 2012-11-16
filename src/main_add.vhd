@@ -35,11 +35,11 @@ procedure A1S
 		signal larger : in STD_LOGIC_VECTOR(3 downto 0);
 		signal G	  : in STD_LOGIC_VECTOR(3 downto 0);
 		signal P       : in STD_LOGIC_VECTOR(3 downto 0);
-		signal temp_sum : in STD_LOGIC_VECTOR(3 downto 0);
 		signal cin		: in STD_LOGIC;
 		signal sum		: out STD_LOGIC_VECTOR(3 downto 0)
 	 ) is
-	 signal carry : STD_LOGIC(3 downto 0);
+	variable carry : STD_LOGIC(3 downto 0);
+	variable temp_sum : STD_LOGIC_VECTOR(3 downto 0);
 begin
 	carry(0) <= '0';
 	carry(1) <= G(0) or (P(0) and carry(0));
@@ -57,7 +57,6 @@ signal P : STD_LOGIC_VECTOR(55 downto 0);
 signal GG : STD_LOGIC_VECTOR(13 downto 0);
 signal PG : STD_LOGIC_VECTOR(13 downto 0);
 signal temp_larger : STD_LOGIC_VECTOR(55 downto 0);
-signal temp_sum : STD_LOGIC_VECTOR(55 downto 0);
 signal carry : STD_LOGIC_VECTOR(14 downto 0);
 
 signal i : integer := 0;
@@ -75,7 +74,7 @@ CARRY_CALC: for i in 1 to 14 generate
 end generate CARRY_CALC;
 
 SUM: for i in 0 to 13 generate
-	A1S(smaller((4*i+3) downto (4*i)), larger((4*i+3) downto (4*i)), G((4*i+3) downto (4*i)), P((4*i+3) downto (4*i)), temp_sum((4*i+3) downto (4*i)), carry(i), Sum((4*i+3) downto (4*i)));
+	A1S(smaller((4*i+3) downto (4*i)), larger((4*i+3) downto (4*i)), G((4*i+3) downto (4*i)), P((4*i+3) downto (4*i)), carry(i), Sum((4*i+3) downto (4*i)));
 end generate SUM;
 
 GROUP_CLA: for i in 0 to 13 generate
