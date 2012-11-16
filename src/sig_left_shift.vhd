@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity sig_left_shift is
     Port ( shift_in : in  STD_LOGIC_VECTOR (53 downto 0);
            ZLC_shift : in  STD_LOGIC_VECTOR (6 downto 0);
-           shift_out : out  STD_LOGIC_VECTOR (52 downto 0));
+           shift_out : out  STD_LOGIC_VECTOR (53 downto 0));
 end sig_left_shift;
 
 architecture Behavioral of sig_left_shift is
@@ -45,7 +45,7 @@ L6 <= L5 when ZLC_shift(4) = '0' else (L5(39 downto 0) & "0000000000000000");
 L7 <= L6 when ZLC_shift(5) = '0' else (L5(23 downto 0) & "00000000000000000000000000000000");
 L8 <= L7 when ZLC_shift(6) = '0' else (others => '0');
 
-shift_out <= L8(54 downto 2); -- Drop MSB since its implicit in the final result
+shift_out <= L8(55 downto 2);
 										-- Drop 2 LSB since they were buffers for initial right shift.
 end Behavioral;
 
