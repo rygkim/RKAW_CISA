@@ -31,11 +31,21 @@ end main_add;
 architecture Structural of main_add is
 
 procedure A1S
-	(	signal temp_sum : in STD_LOGIC_VECTOR(3 downto 0);
+	(	signal smaller : in STD_LOGIC_VECTOR(3 downto 0);
+		signal larger : in STD_LOGIC_VECTOR(3 downto 0);
+		signal G	  : in STD_LOGIC_VECTOR(3 downto 0);
+		signal P       : in STD_LOGIC_VECTOR(3 downto 0);
+		signal temp_sum : in STD_LOGIC_VECTOR(3 downto 0);
 		signal cin		: in STD_LOGIC;
 		signal sum		: out STD_LOGIC_VECTOR(3 downto 0)
 	 ) is
+	 signal carry : STD_LOGIC(3 downto 0);
 begin
+	carry(0) <= '0';
+	carry(1) <= G(0) or (P(0) and carry(0));
+	carry(2) <= G(1) or (P(1) and carry(1));
+	carry(3) <= G(2) or (P(2) and carry(2));
+	temp_sum <= (carry xor smaller xor larger);
 	sum(0) <= cin xor temp_sum(0);
 	sum(1) <= (cin and temp_sum(0)) xor temp_sum(1);
 	sum(2) <= (cin and temp_sum(0) and temp_sum(1)) xor temp_sum(2);
@@ -54,10 +64,9 @@ signal i : integer := 0;
 begin
 
 temp_larger <= Larger & "000";
-G <= Smaller and temp_arger;
+G <= Smaller and temp_larger;
 P <= Smaller or temp_larger;
 
-temp_sum <= Smaller xor temp_larger;
 carry(0) <= Cin;
 Cout <= carry(14);
 
@@ -66,7 +75,7 @@ CARRY_CALC: for i in 1 to 14 generate
 end generate CARRY_CALC;
 
 SUM: for i in 0 to 13 generate
-	A1S(temp_sum((4*i+3) downto (4*i)), carry(i), Sum((4*i+3) downto (4*i)));
+	A1S(smaller((4*i+3) downto (4*i)), larger((4*i+3) downto (4*i)), G((4*i+3) downto (4*i)), P((4*i+3) downto (4*i)), temp_sum((4*i+3) downto (4*i)), carry(i), Sum((4*i+3) downto (4*i)));
 end generate SUM;
 
 GROUP_CLA: for i in 0 to 13 generate
