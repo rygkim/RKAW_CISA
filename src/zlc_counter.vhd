@@ -45,7 +45,7 @@ signal i : integer := 0;
 begin
 
 enable <= Sum2(53) or Ahidden or Bhidden;
-inverted <= not (Sum2 & ((8 downto 0) => '0'));
+inverted <= not (Sum2 & "000000000");
 
 L2: for i in 0 to 31 generate
 	zlc_l2(2*i) <= inverted(2*i+1) and (not inverted(2*i));
@@ -92,7 +92,7 @@ zlc_l7(6) <= zlc_l6(11) and zlc_l6(5);
 
 with enable select
 	count <= zlc_l7 when '1',
-			"0000001" when '0;
+			"0000001" when '0';
 
 end Structural;
 
