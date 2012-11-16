@@ -40,6 +40,8 @@ signal zlc_l5 : STD_LOGIC_VECTOR(19 downto 0);
 signal zlc_l6 : STD_LOGIC_VECTOR(11 downto 0);
 signal zlc_l7 : STD_LOGIC_VECTOR(6 downto 0);
 
+signal i : integer := 0;
+
 begin
 
 enable <= Sum2(53) or Ahidden or Bhidden;
@@ -59,8 +61,8 @@ end generate L3;
 L4: for i in 0 to 7 generate
 	zlc_l4(4*i) <= zlc_l3(6*i+3) or(zlc_l3(6*i+5) and zlc_l3(6*i));
 	zlc_l4(4*i+1) <= zlc_l3(6*i+4) or (zlc_l3(6*i+5) and zlc_l3(6*i+1));
-	zlc_l4(4*i+2) <= zlc_l3(6*i+5) and (not zlc_l4(6*i+2));
-	zlc_l4(4*i+3) <= zlc_l3(6*i+5) and zlc_l4(6*i+2);
+	zlc_l4(4*i+2) <= zlc_l3(6*i+5) and (not zlc_l3(6*i+2));
+	zlc_l4(4*i+3) <= zlc_l3(6*i+5) and zlc_l3(6*i+2);
 end generate L4;
 
 L5: for i in 0 to 3 generate
@@ -77,7 +79,7 @@ L6: for i in 0 to 1 generate
 	zlc_l6(6*i+2) <= zlc_l5(10*i+7) or (zlc_l5(10*i+9) and zlc_l5(10*i+2));
 	zlc_l6(6*i+3) <= zlc_l5(10*i+8) or (zlc_l5(10*i+9) and zlc_l5(10*i+3));
 	zlc_l6(6*i+4) <= zlc_l5(10*i+9) and (not zlc_l5(10*i+4));
-	zlc_l6(6*i+5) <= zlc_15(10*i+9) and zlc_l5(10*i+4);
+	zlc_l6(6*i+5) <= zlc_l5(10*i+9) and zlc_l5(10*i+4);
 end generate L6;
 
 zlc_l7(0) <= zlc_l6(6) or (zlc_l6(11) and zlc_l6(0));

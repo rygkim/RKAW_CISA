@@ -39,6 +39,8 @@ signal less_l2 :std_logic_vector (7 downto 0);
 signal equal_l3 : std_logic;
 signal less_l3 : std_logic;
 
+signal i : integer := 0;
+
 begin
 
 equal <= 1 & (A(62 downto 0) xnor B(62 downto 0));
