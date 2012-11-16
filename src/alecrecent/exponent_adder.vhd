@@ -36,6 +36,7 @@ entity exponent_adder is
            null_exp : out  STD_LOGIC);
 end exponent_adder;
 
+
 architecture structural of exponent_adder is
 
 type GP_class is
@@ -78,11 +79,17 @@ signal cout : std_logic;
 signal intsum : std_logic_vector(10 downto 0);
 signal B : std_logic_vector(10 downto 0);
 signal C : std_logic_vector(10 downto 0);
+signal A2 : std_logic_vector(10 downto 0);
+signal B_INV : std_logic_vector(10 downto 0);
+signal carry : std_logic_vector(10 downto 0);
+signal G : std_logic_vector(10 downto 0);
+signal P : std_logic_vector(10 downto 0);
+signal sum : std_logic_vector(10 downto 0);
 begin
 
 zlc_pad <= "0000" & zlc_in;
 A <= zlc_pad;
-C <= exp_in;
+A2 <= exp_in;
 B <= "11111111111";
 
 --Perform ZLC - 1
@@ -121,7 +128,7 @@ brentkung(HA(8), R3(3), R4(0));
 brentkung(R1(4), R3(3), R4(1));
 brentkung(R2(4), R3(3), R4(2));
 
-cout <= R4(2).G;
+--cout <= R4(2).G;
 
 intsum(0) <= HA(0).P;
 intsum(1) <= HA(1).P xor HA(0).G;
@@ -135,8 +142,24 @@ intsum(8) <= HA(8).P xor R3(3).G;
 intsum(9) <= HA(9).P xor R4(0).G;
 intsum(10) <= HA(10).P xor R4(1).G;
 
-exp_out <= intsum;
-null_exp <= cout;
 
+carry(0) <= '1'; 
+B_INV <= not intsum; 
+CARRY_CALC: for i in 1 to 10 generate 
+    carry(i) <= G(i-1) or (P(i-1) and carry(i-1)); 
+end generate CARRY_CALC; 
+
+DO_SUM: for i in 0 to 10 generate 
+    Sum(i) <= A2(i) xor B_INV(i) xor carry(i); 
+end generate DO_SUM; 
+
+CLA: for i in 0 to 10 generate 
+    G(i) <= A2(i) and B_INV(i); 
+    P(i) <= A2(i) or B_INV(i); 
+end generate CLA;
+
+exp_out <= sum;
+null_exp <= not(sum(0) or sum(1) or sum(2) or sum(3) or sum(4) or sum(5) or 
+							sum(6) or sum(7) or sum(8) or sum(9) or sum(10));
 end structural;
 

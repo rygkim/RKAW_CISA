@@ -28,6 +28,7 @@ entity sig_right_shift is
            shifted_data : out  STD_LOGIC_VECTOR (54 downto 0));
 end sig_right_shift;
 
+
 architecture structural of sig_right_shift is
 
 signal sticky : std_logic;

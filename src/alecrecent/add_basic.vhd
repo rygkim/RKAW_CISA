@@ -49,6 +49,7 @@ architecture Behavioral of add_basic is
 		COUT : OUT std_logic
 		);
 	END COMPONENT;
+	
 
 	COMPONENT sig_compare_switch
 	PORT(
@@ -72,24 +73,60 @@ architecture Behavioral of add_basic is
 		shifted_data : OUT std_logic_vector(54 downto 0)
 		);
 	END COMPONENT;
+	
+	
+	COMPONENT main_add
+	PORT(
+		Smaller : IN std_logic_vector(55 downto 0);
+		Larger : IN std_logic_vector(52 downto 0);
+		Cin : IN std_logic;          
+		Cout : OUT std_logic;
+		Sum : OUT std_logic_vector(55 downto 0)
+		);
+	END COMPONENT;
 
+	COMPONENT zlc_counter
+	PORT(
+		Sum2 : IN std_logic_vector(54 downto 0);
+		Ahidden : IN std_logic;
+		Bhidden : IN std_logic;          
+		Count : OUT std_logic_vector(6 downto 0)
+		);
+	END COMPONENT;
+
+	COMPONENT sig_left_shift
+	PORT(
+		shift_in : IN std_logic_vector(54 downto 0);
+		ZLC_shift : IN std_logic_vector(6 downto 0);          
+		shift_out : OUT std_logic_vector(52 downto 0)
+		);
+	END COMPONENT;
+
+	COMPONENT exponent_adder
+	PORT(
+		exp_in : IN std_logic_vector(10 downto 0);
+		zlc_in : IN std_logic_vector(6 downto 0);          
+		exp_out : OUT std_logic_vector(10 downto 0);
+		null_exp : OUT std_logic
+		);
+	END COMPONENT;
 
 signal Aexp : std_logic_vector(10 downto 0);
 signal Bexp : std_logic_vector(10 downto 0);
-signal Aman : std_logic_vector(51 downto 0);
-signal Bman : std_logic_vector(51 downto 0);
+--signal Aman : std_logic_vector(51 downto 0);
+--signal Bman : std_logic_vector(51 downto 0);
 signal Asign : std_logic;
 signal Bsign : std_logic;
 signal s_AGTB : std_logic;
-signal s_BGTA : std_logic;
-signal s_AEQB : std_logic;
+--signal s_BGTA : std_logic;
+--signal s_AEQB : std_logic;
 signal s_Ah	  : std_logic;
 signal s_Bh	  : std_logic;
 signal s_exp  : std_logic_vector(10 downto 0);
 signal s_shift : std_logic_vector(5 downto 0);
 signal s_large : std_logic_vector(52 downto 0);
 signal s_small : std_logic_vector(52 downto 0);
-signal s_swap : std_logic;
+--signal s_swap : std_logic;
 signal comp_en : std_logic;
 signal s_shifted : std_logic_vector(54 downto 0);
 signal sig_add_cin : std_logic;
@@ -98,7 +135,12 @@ signal s_explarge : std_logic_vector(10 downto 0);
 signal s_expsmall : std_logic_vector(10 downto 0);
 signal s_stickybit : std_logic;
 signal combine : std_logic_vector(55 downto 0);
-
+signal main_add_cout :std_logic;
+signal main_add_sum : std_logic_vector(55 downto 0);
+signal sum_bus : std_logic_vector(54 downto 0);
+signal s_zlc_count : std_logic_vector(6 downto 0);
+signal s_leftshift : std_logic_vector(52 downto 0);
+signal s_nullsel : std_logic;
 begin
 
 Asign <= Aval(63);
@@ -107,8 +149,8 @@ Bsign <= Bval(63);
 Aexp <= Aval(62 downto 52);
 Bexp <= Bval(62 downto 52);
 
-Aman <= Aval(51 downto 0);
-Bman <= Bval(51 downto 0);
+--Aman <= Aval(51 downto 0);
+--Bman <= Bval(51 downto 0);
 --Execute Comparison of Aexp and Bexp
 
 
@@ -150,8 +192,41 @@ Bman <= Bval(51 downto 0);
 		COUT => sig_add_cin
 	);
 	
+	Inst_main_add: main_add PORT MAP(
+		Smaller => s_comped,
+		Larger => s_large,
+		Cin => sig_add_cin,
+		Cout => main_add_cout,
+		Sum => main_add_sum
+	);
+	
+sum_bus(54) <= comp_en xor main_add_cout;
+sum_bus(53 downto 0) <= main_add_sum(55 downto 2);
+
+	Inst_zlc_counter: zlc_counter PORT MAP(
+		Sum2 => sum_bus,
+		Ahidden => s_Ah,
+		Bhidden => s_Bh,
+		Count => s_zlc_count
+	);
+	
+	
+	Inst_sig_left_shift: sig_left_shift PORT MAP(
+		shift_in => sum_bus,
+		ZLC_shift => s_zlc_count,
+		shift_out => s_leftshift
+	);
+	
+	Inst_exponent_adder: exponent_adder PORT MAP(
+		exp_in => s_exp,
+		zlc_in => s_zlc_count,
+		exp_out => Qval(62 downto 52),
+		null_exp => s_nullsel
+	);
+	
 --Rectify exponents so they are equal, calculate shift for mantissa (can shift by maxiumum of 63 bits ONLY!)
 
+Qval(51 downto 0) <= s_leftshift(51 downto 0) when s_nullsel = '0' else s_leftshift(52 downto 1);
 
 Qval(63) <= Asign when s_AGTB = '1' else Bsign;
 comp_en <= Asign xor Bsign;

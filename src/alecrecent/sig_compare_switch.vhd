@@ -32,6 +32,7 @@ entity sig_compare_switch is
            Swap : out  STD_LOGIC);
 end sig_compare_switch;
 
+
 architecture Structural of sig_compare_switch is
 
 signal equal : std_logic_vector(63 downto 0);
@@ -76,7 +77,7 @@ Small <= (or_reduce(A(62 downto 52)) & A(51 downto 0)) when less_l3 = '0' else
 		 (or_reduce(B(62 downto 52)) & B(51 downto 0));
 Large <= (or_reduce(B(62 downto 52)) & B(51 downto 0)) when less_l3 = '0' else
 		 (or_reduce(A(62 downto 52)) & A(51 downto 0));
-Swap <= not less_l3;
+Swap <= less_l3;
 
 ExpSmall <= A(62 downto 52) when less_l3 = '0' else
 			B(62 downto 52);

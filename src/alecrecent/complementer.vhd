@@ -28,14 +28,15 @@ entity complementer is
            COUT : out  STD_LOGIC);
 end complementer;
 
+
 architecture Behavioral of complementer is
 
 begin
 
 --DOUT <= not(DATA) when EN = '1' else DATA; --Check to see if MUX based is faster in Synopsys...
-DOUT_NAND : for i in 0 to 55 generate
-  DOUT(i) <= DATA(i) nand EN;  
-end generate DOUT_NAND;
+DOUT_XOR : for i in 0 to 55 generate
+  DOUT(i) <= (DATA(i) xor EN);  
+end generate DOUT_XOR;
 COUT <= EN;
 
 

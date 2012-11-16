@@ -37,6 +37,7 @@ entity exp_rect_shift is
            SHIFT : out  STD_LOGIC_VECTOR (5 downto 0));
 end exp_rect_shift;
 
+
 architecture Behavioral of exp_rect_shift is
 
 	COMPONENT absolute

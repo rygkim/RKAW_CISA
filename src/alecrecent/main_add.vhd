@@ -28,6 +28,7 @@ entity main_add is
 			Sum    : out STD_LOGIC_VECTOR(55 downto 0));
 end main_add;
 
+
 architecture Structural of main_add is
 
 procedure A1S
@@ -72,5 +73,7 @@ GROUP_CLA: for i in 0 to 13 generate
 	GG(i) <= G(4*i+3) or (G(4*i+2) and P(4*i+3)) or (G(4*i+1) and P(4*i+3) and P(4*i+2)) or (G(4*i) and P(4*i+3) and P(4*i+2) and P(4*i+1));
 	PG(i) <= P(4*i) and  P(4*i+1) and P(4*i+2) and P(4*i+3);
 end generate GROUP_CLA;
+
+Cout <= G(55) or (P(55) and carry(13));
 
 end Structural;

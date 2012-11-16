@@ -27,6 +27,7 @@ entity absolute is
            S : out  STD_LOGIC_VECTOR (10 downto 0));
 end absolute;
 
+
 architecture Behavioral of absolute is
 
 type GP_class is

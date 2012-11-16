@@ -29,6 +29,7 @@ entity zlc_counter is
 			Count : out STD_LOGIC_VECTOR(6 downto 0));
 end zlc_counter;
 
+
 architecture Structural of zlc_counter is
 
 signal enable : STD_LOGIC;
