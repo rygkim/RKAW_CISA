@@ -43,11 +43,11 @@ signal i : integer := 0;
 
 begin
 
-equal <= 1 & (A(62 downto 0) xnor B(62 downto 0));
-less <= 0 & ((not A(62 downto 0)) and B(62 downto 0));
+equal <= '1' & (A(62 downto 0) xnor B(62 downto 0));
+less <= '0' & ((not A(62 downto 0)) and B(62 downto 0));
 
 L2: for i in 0 to 7 generate 
-	equal_l2(i) <= and equal(((i*8)+7) downto i*8);
+	equal_l2(i) <= and_reduce(equal(((i*8)+7) downto i*8));
 	with equal(((i*8)+7) downto i*8) select
 		less_l2(i) <= 	less((i*8 + 7)) when "0-------",
 						less((i*8 + 6)) when "10------",
@@ -59,7 +59,7 @@ L2: for i in 0 to 7 generate
 						less((i*8)) when "11111110";
 end generate L2;
 
-equal_l3 <= and equal_l2;
+equal_l3 <= and_reduce(equal_l2);
 with equal_l2 select
 	less_l3 <= 	less_l2(7) when "0-------",
 				less_l2(6) when "10------",
