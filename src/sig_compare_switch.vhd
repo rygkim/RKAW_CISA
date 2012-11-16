@@ -19,7 +19,7 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use IEEE.STD_LOGIC_MISC.ALL;
 
 
 entity sig_compare_switch is
@@ -27,6 +27,8 @@ entity sig_compare_switch is
            B : in  STD_LOGIC_VECTOR (63 downto 0);
            Large : out  STD_LOGIC_VECTOR (52 downto 0);
            Small : out  STD_LOGIC_VECTOR (52 downto 0);
+		   ExpLarge : out STD_LOGIC_VECTOR(10 downto 0);
+		   ExpSmall : out STD_LOGIC_VECTOR(10 downto 0);
            Swap : out  STD_LOGIC);
 end sig_compare_switch;
 
@@ -70,12 +72,16 @@ with equal_l2 select
 				less_l2(1) when "1111110-",
 				less_l2(0) when "11111110";
 				
-Large <= A(52 downto 0) when less_l3 = '0' else
-		 B(52 downto 0);
-Small <= B(52 downto 0) when less_l3 = '0' else
-		 A(52 downto 0);
-Swap <= less_l3;
+Small <= (or_reduce(A(62 downto 52)) & A(51 downto 0)) when less_l3 = '0' else
+		 (or_reduce(B(62 downto 52)) & B(51 downto 0));
+Large <= (or_reduce(B(62 downto 52)) & B(51 downto 0)) when less_l3 = '0' else
+		 (or_reduce(A(62 downto 52)) & A(51 downto 0));
+Swap <= not less_l3;
 
+ExpSmall <= A(62 downto 52) when less_l3 = '0' else
+			B(62 downto 52);
+ExpLarge <= B(62 downto 52) when less_l3 = '0' else
+			A(62 downto 52);
 --process(Ahidden, Bhidden, Asig, Bsig)
 --begin
 --	if(Ahidden = '1' and Bhidden = '0') then
